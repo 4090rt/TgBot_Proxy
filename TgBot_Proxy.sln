@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBot_Proxy", "TgBot_Proxy\TgBot_Proxy.csproj", "{2EEE23D8-7330-4604-A6E2-15AE31DF150B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2EEE23D8-7330-4604-A6E2-15AE31DF150B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EEE23D8-7330-4604-A6E2-15AE31DF150B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EEE23D8-7330-4604-A6E2-15AE31DF150B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EEE23D8-7330-4604-A6E2-15AE31DF150B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {32F48D55-3B7D-4750-8EA4-9B2F30AC26B6}
+	EndGlobalSection
+EndGlobal
