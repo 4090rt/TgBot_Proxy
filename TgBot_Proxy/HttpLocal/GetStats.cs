@@ -12,7 +12,7 @@ namespace TgBot_Proxy.HttpLocal
 {
     public class GetStats
     {
-        private const string Endpoint = "/STATS";
+        private const string Endpoint = "STATS";
         private readonly ILogger<GetStats> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 

@@ -10,6 +10,7 @@ using TgBot_Proxy.AppSettingsParse;
 using TgBot_Proxy.Cache;
 using TgBot_Proxy.DataModel;
 using TgBot_Proxy.DataModelJson;
+using TgBot_Proxy.ProxySubstitution;
 
 namespace TgBot_Proxy.BotService
 {
@@ -21,47 +22,57 @@ namespace TgBot_Proxy.BotService
         private readonly HJsonStruct _settings;
         private readonly CachedProxyList _cachedProxyList;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly MethodSubstitution _methodSubstitution;
+        private TelegramBotClient _TelegramBotClient { get; set; }
+        private HttpClient _httpClient { get; set; }
 
-        private TelegramBotClient _bot = null!;
+        private TelegramBotClient _bot { get; set; }
 
-        public Service(ILogger<Service> logger, HJsonStruct settings, IServiceScopeFactory scopeFactory, CachedProxyList cachedProxyList)
+        public Service(ILogger<Service> logger, HJsonStruct settings, IServiceScopeFactory scopeFactory, CachedProxyList cachedProxyList, MethodSubstitution methodSubstitution)
         {
             _logger = logger;
             _settings = settings;
             _scopeFactory = scopeFactory;
             _cachedProxyList = cachedProxyList; 
+            _methodSubstitution = methodSubstitution;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var token = _settings.ModelToken.Token;
 
-            // Прокси для Telegram будем получать из отдельного метода, пока отключён:
-            // string proxy = await GetProxyAsync(stoppingToken);
-
-            _bot = new TelegramBotClient(token);
-
-            var receiverOptions = new ReceiverOptions
+            while (!stoppingToken.IsCancellationRequested)
             {
-                AllowedUpdates = [UpdateType.Message]
-            };
+                var result = await _methodSubstitution.Methods(stoppingToken).ConfigureAwait(false);
 
-            _bot.StartReceiving(
-                updateHandler: HandleUpdateAsync,
-                errorHandler: (_, ex, src, _) =>
+                _bot = result.Item1;
+                _httpClient = result.Item2;
+
+                if (_bot is null)
+                    return;
+
+                var receiverOptions = new ReceiverOptions
                 {
-                    _logger.LogError(ex, "Ошибка при получении обновлений: {Source}", src);
-                    return Task.CompletedTask;
-                },
-                receiverOptions: receiverOptions,
-                cancellationToken: stoppingToken);
+                    AllowedUpdates = [UpdateType.Message]
+                };
 
-            try
-            {
-                await Task.Delay(Timeout.Infinite, stoppingToken);
-            }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-            {
+                _bot.StartReceiving(
+                    updateHandler: HandleUpdateAsync,
+                    errorHandler: (_, ex, src, _) =>
+                    {
+                        _logger.LogError(ex, "Ошибка при получении обновлений: {Source}", src);
+                        return Task.CompletedTask;
+                    },
+                    receiverOptions: receiverOptions,
+                    cancellationToken: stoppingToken);
+
+                try
+                {
+                    await Task.Delay(Timeout.Infinite, stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                }
             }
         }
 

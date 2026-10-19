@@ -31,7 +31,8 @@ namespace TgBot_Proxy.Cache
                     _memoryCache.Set(cache_key, model, options);
 
                     var staleoptions = new MemoryCacheEntryOptions()
-                        .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                        .SetSlidingExpiration(TimeSpan.FromHours(13))
+                        .SetAbsoluteExpiration(TimeSpan.FromHours(25));
 
                     _memoryCache.Set(staleCachekey, model, staleoptions);
 
@@ -48,7 +49,7 @@ namespace TgBot_Proxy.Cache
             }
         }
 
-        public List<T> GetCache<T>() where T : new()
+        public IReadOnlyList<T> GetCache<T>() where T : new()
         {
             string cache_key = "HTTPCache_key" + typeof(T);
             string staleCachekey = "HTTPCache_key_stale" + typeof(T);

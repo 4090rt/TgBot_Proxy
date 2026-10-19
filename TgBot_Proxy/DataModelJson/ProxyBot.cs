@@ -9,8 +9,8 @@ namespace TgBot_Proxy.DataModelJson
 {
     public struct ProxyBot
     {
-        [JsonPropertyName("Socks")]
-        public string IP { get; set; }
+        [JsonPropertyName("UrlTest")]
+        public string UrlTest { get; set; }
 
     }
 }

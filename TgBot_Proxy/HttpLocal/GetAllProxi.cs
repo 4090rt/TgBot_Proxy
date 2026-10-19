@@ -6,7 +6,7 @@ namespace TgBot_Proxy.HttpLocal
 {
     public class GetAllProxy
     {
-        private const string Endpoint = "/ALL";
+        private const string Endpoint = "ALL";
 
         private readonly ILogger<GetAllProxy> _logger;
         private readonly IHttpClientFactory _httpClientFactory;

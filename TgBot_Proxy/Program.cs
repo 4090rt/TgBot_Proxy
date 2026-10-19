@@ -7,6 +7,7 @@ using TgBot_Proxy.Cache;
 using TgBot_Proxy.DataModel;
 using TgBot_Proxy.DataModelJson;
 using TgBot_Proxy.HttpLocal;
+using TgBot_Proxy.Socks5Additionaltest;
 
 namespace TgBot_Proxy
 {
@@ -31,7 +32,11 @@ namespace TgBot_Proxy
 
             servise.AddScoped<GetSocksReuqest>();
             servise.AddScoped<GetMTProtoRequest>();
-            servise.AddScoped<CachedProxyList>();
+            servise.AddSingleton<CachedProxyList>();
+            servise.AddScoped<GetAllProxy>();
+            servise.AddScoped<GetStats>();
+            servise.AddScoped<AdditionalTestClient>();
+
             servise.AddMemoryCache();
 
             servise.AddSingleton<Service>();
@@ -125,7 +130,6 @@ namespace TgBot_Proxy
                             _logger.LogWarning("Обновление уже выполняется, пропускаем тик");
                             return;
                         }
-
                         try
                         {
                             Task<List<MTProtoData>> mTProtoDatas = MtprotoGet.MTProtoDatasReuqst(stoppingToken);
