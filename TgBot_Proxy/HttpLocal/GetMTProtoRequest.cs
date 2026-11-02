@@ -7,7 +7,6 @@ namespace TgBot_Proxy.HttpLocal
     public class GetMTProtoRequest
     {
         private const string Endpoint = "MTPROTO";
-
         private readonly ILogger<GetMTProtoRequest> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 

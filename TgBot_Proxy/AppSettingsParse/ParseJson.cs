@@ -1,7 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.Json;
-using Telegram.Bot.Types;
-using TgBot_Proxy.DataModelJson;
 
 namespace TgBot_Proxy.AppSettingsParse
 {

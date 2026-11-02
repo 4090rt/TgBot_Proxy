@@ -1,11 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using TgBot_Proxy.DataModel;
 
 namespace TgBot_Proxy.HttpLocal
@@ -26,7 +20,7 @@ namespace TgBot_Proxy.HttpLocal
         {
             try
             {
-                using var client = _httpClientFactory.CreateClient("CleintLocal");
+                var client = _httpClientFactory.CreateClient(HTTPSettnigs.ClientName);
 
                 using HttpResponseMessage httpResponseMessage = await client.GetAsync(Endpoint, cancellationToken: cancellation).ConfigureAwait(false);
                 if (httpResponseMessage.IsSuccessStatusCode)
@@ -35,14 +29,14 @@ namespace TgBot_Proxy.HttpLocal
 
                     var jsonser = await JsonSerializer.DeserializeAsync<ProxyStats>(json, cancellationToken: cancellation).ConfigureAwait(false);
 
-                    if (jsonser.ProxiesAll != 0)
+                    if (jsonser is { ProxiesAll: > 0 })
                         return jsonser;
                     else
                         return new ProxyStats();
                 }
                 else
                 {
-                    _logger.LogError("Не удалось получить список MTProto прокси с локального хоста" + httpResponseMessage.StatusCode);
+                    _logger.LogError("Не удалось получить статистику прокси с локального хоста" + httpResponseMessage.StatusCode);
                     return new ProxyStats();
                 }
             }

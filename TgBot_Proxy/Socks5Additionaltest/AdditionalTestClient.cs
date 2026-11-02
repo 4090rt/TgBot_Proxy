@@ -2,12 +2,7 @@
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Polly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TgBot_Proxy.Socks5Additionaltest
 {
@@ -35,7 +30,6 @@ namespace TgBot_Proxy.Socks5Additionaltest
 
                     UseProxy = true,
                     Proxy = new WebProxy(new Uri($"socks5://{Ip}:{port}")),
-                    ConnectTimeout = TimeSpan.FromSeconds(5)
                 };
 
                 var timeout = Policy.TimeoutAsync<HttpResponseMessage>(

@@ -26,13 +26,13 @@ namespace TgBot_Proxy.Cache
                 if (model != null && model.Count != 0)
                 {
                     var options = new MemoryCacheEntryOptions()
-                           .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+                           .SetAbsoluteExpiration(FreshTtl);
 
                     _memoryCache.Set(cache_key, model, options);
 
                     var staleoptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromHours(13))
-                        .SetAbsoluteExpiration(TimeSpan.FromHours(25));
+                        .SetSlidingExpiration(FreshTtl)
+                        .SetAbsoluteExpiration(StaleTtl);
 
                     _memoryCache.Set(staleCachekey, model, staleoptions);
 

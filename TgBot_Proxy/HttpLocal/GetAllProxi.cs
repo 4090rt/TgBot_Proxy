@@ -21,7 +21,7 @@ namespace TgBot_Proxy.HttpLocal
         {
             try
             {
-                using var client = _httpClientFactory.CreateClient("CleintLocal");
+                var client = _httpClientFactory.CreateClient(HTTPSettnigs.ClientName);
 
                 using HttpResponseMessage httpResponseMessage = await client.GetAsync(Endpoint, cancellationToken).ConfigureAwait(false);
                 if (httpResponseMessage.IsSuccessStatusCode)
@@ -30,7 +30,7 @@ namespace TgBot_Proxy.HttpLocal
 
                     var jsonser = await JsonSerializer.DeserializeAsync<List<AllProxies>>(json, cancellationToken: cancellationToken).ConfigureAwait(false);
 
-                    if (jsonser.Count != 0)
+                    if (jsonser is { Count: > 0 })
                         return jsonser;
                     else
                         return new List<AllProxies>();

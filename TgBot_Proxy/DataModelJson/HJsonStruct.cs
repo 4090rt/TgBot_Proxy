@@ -11,7 +11,7 @@ namespace TgBot_Proxy.DataModelJson
         public ModelToken ModelToken { get; set; } = new ModelToken();
 
         [JsonPropertyName("TestProxyUrl")]
-        public ProxyBot ProxyUrl { get; set; } = new ProxyBot();
+        public TestProxyUrl ProxyUrl { get; set; } = new TestProxyUrl();
 
         [JsonPropertyName("Local")]
         public LocalUri LocalUri { get; set; } = new LocalUri();

@@ -7,7 +7,6 @@ namespace TgBot_Proxy.HttpLocal
     public class GetSocksReuqest
     {
         private const string Endpoint = "SOCKS5";
-
         private readonly ILogger<GetSocksReuqest> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 

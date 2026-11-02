@@ -1,17 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using TgBot_Proxy.AppSettingsParse;
 using TgBot_Proxy.Cache;
 using TgBot_Proxy.DataModel;
 using TgBot_Proxy.DataModelJson;
 using TgBot_Proxy.Socks5Additionaltest;
-using static System.Net.WebRequestMethods;
 
 namespace TgBot_Proxy.ProxySubstitution
 {
@@ -35,26 +29,31 @@ namespace TgBot_Proxy.ProxySubstitution
             {
                 string token = ParseJson.Parse<HJsonStruct>().ModelToken.Token;
 
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _logger.LogError("Bot token is null or empty");           
+                }
+
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var items = _cachedProxyList.GetCache<SOCKSData>();
 
                     foreach (var item in items)
                     {
-                        string addurl = $"http://{item?.IP}:{item?.Port}";
+                        string addurl = $"socks5://{item?.IP}:{item?.Port}";
 
                         var result = await _additionalTestClient.TestClass(item?.IP, item?.Port).ConfigureAwait(false);
 
                         if (result.Item1 == true)
                         {
-                            using HttpClient httpClient = new HttpClient(new HttpClientHandler
+                            HttpClient httpClient = new HttpClient(new HttpClientHandler
                             {
                                 UseCookies = false,
                                 UseProxy = true,
                                 Proxy = new WebProxy(addurl)
                             })
                             {
-                                Timeout = TimeSpan.FromSeconds(10)
+                                Timeout = TimeSpan.FromSeconds(60)
                             };
                             try
                             {
@@ -66,9 +65,9 @@ namespace TgBot_Proxy.ProxySubstitution
                             {
                                 httpClient.Dispose();
                             }
-                            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
                         }
                     }
+                    await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
                 }
                 throw new OperationCanceledException(
                     "Не удалось создать TelegramBotClient: отмена или нет доступных прокси",
@@ -77,12 +76,12 @@ namespace TgBot_Proxy.ProxySubstitution
             catch (OperationCanceledException ex)
             {
                 _logger.LogError("OperationCancled" + ex.Message + ex.StackTrace);
-                throw new Exception();
+                throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message + ex.StackTrace);
-                throw new Exception();
+                throw;
             }
         }
     }
