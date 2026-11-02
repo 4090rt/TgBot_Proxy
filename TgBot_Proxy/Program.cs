@@ -7,6 +7,7 @@ using TgBot_Proxy.Cache;
 using TgBot_Proxy.DataModel;
 using TgBot_Proxy.DataModelJson;
 using TgBot_Proxy.HttpLocal;
+using TgBot_Proxy.ProxySubstitution;
 using TgBot_Proxy.Socks5Additionaltest;
 
 namespace TgBot_Proxy
@@ -25,23 +26,28 @@ namespace TgBot_Proxy
 
             var servise = new ServiceCollection();
 
-            servise.AddLogging(build => ConfigureLogging(build, _settings));
-
             servise.AddSingleton(_settings);
             servise.AddCleintLocal(_settings, loggerFactory.CreateLogger(HTTPSettnigs.ClientName));
 
-            servise.AddScoped<GetSocksReuqest>();
-            servise.AddScoped<GetMTProtoRequest>();
+            servise.AddSingleton<GetSocksReuqest>();
+            servise.AddSingleton<GetMTProtoRequest>();
             servise.AddSingleton<CachedProxyList>();
-            servise.AddScoped<GetAllProxy>();
-            servise.AddScoped<GetStats>();
-            servise.AddScoped<AdditionalTestClient>();
+            servise.AddSingleton<GetAllProxy>();
+            servise.AddSingleton<GetStats>();
+            servise.AddSingleton<AdditionalTestClient>();
+            servise.AddSingleton<AddtionalTestClass>();
+            servise.AddSingleton<MethodSubstitution>();
+            servise.AddSingleton<Service>();
 
             servise.AddMemoryCache();
 
             servise.AddSingleton<Service>();
 
-            var serviceProvider = servise.BuildServiceProvider();
+            var serviceProvider = servise.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            });
 
             using var cts = new CancellationTokenSource();
             Console.CancelKeyPress += (_, eventArgs) =>
